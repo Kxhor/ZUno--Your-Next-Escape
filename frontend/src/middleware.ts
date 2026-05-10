@@ -1,0 +1,63 @@
+import { createServerClient } from "@supabase/ssr";
+import { NextRequest, NextResponse } from "next/server";
+
+export default async function middleware(request: NextRequest) {
+  let supabaseResponse = NextResponse.next({
+    request,
+  });
+
+  const supabase = createServerClient(
+    process.env.NEXT_PUBLIC_SUPABASE_URL!,
+    process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!,
+    {
+      cookies: {
+        getAll() {
+          return request.cookies.getAll();
+        },
+        setAll(cookiesToSet) {
+          cookiesToSet.forEach(({ name, value, options }) =>
+            request.cookies.set(name, value, options)
+          );
+          supabaseResponse = NextResponse.next({
+            request,
+          });
+          cookiesToSet.forEach(({ name, value, options }) =>
+            supabaseResponse.cookies.set(name, value, options)
+          );
+        },
+      },
+    }
+  );
+
+  // This will refresh session if expired - required for Server Components
+  // and protects routes correctly.
+  const {
+    data: { user },
+  } = await supabase.auth.getUser();
+
+  const { pathname } = request.nextUrl;
+
+  // 1. Define protected and public-only paths
+  const protectedPaths = ["/dashboard", "/trips", "/community", "/profile", "/settings"];
+  const authPaths = ["/login", "/register"];
+
+  const isProtected = protectedPaths.some((p) => pathname.startsWith(p));
+  const isAuthPath = authPaths.some((p) => pathname === p);
+
+  // 2. Handle Redirects
+  if (!user && isProtected) {
+    return NextResponse.redirect(new URL("/login", request.url));
+  }
+
+  if (user && isAuthPath) {
+    return NextResponse.redirect(new URL("/dashboard", request.url));
+  }
+
+  return supabaseResponse;
+}
+
+export const config = {
+  matcher: [
+    "/((?!_next/static|_next/image|favicon.ico|.*\\.(?:svg|png|jpg|jpeg|gif|webp)$).*)",
+  ],
+};

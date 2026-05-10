@@ -1,0 +1,126 @@
+@import "tailwindcss";
+@import "tw-animate-css";
+@import "shadcn/tailwind.css";
+
+@custom-variant dark (&:is(.dark *));
+
+/* ─── ZUno Design Tokens ─────────────────────────────────────────── */
+@theme inline {
+  --color-background: var(--background);
+  --color-foreground: var(--foreground);
+  --font-sans: var(--font-inter);
+  --font-heading: var(--font-inter);
+  
+  --color-primary: var(--primary);
+  --color-primary-foreground: var(--primary-foreground);
+  --color-secondary: var(--secondary);
+  --color-secondary-foreground: var(--secondary-foreground);
+  --color-accent: var(--accent);
+  --color-accent-foreground: var(--accent-foreground);
+  
+  --color-border: var(--border);
+  --color-input: var(--input);
+  --color-ring: var(--ring);
+  
+  --radius-card: 20px;
+  --radius-lg: 1rem;
+  --radius-md: 0.75rem;
+  --radius-sm: 0.25rem;
+  
+  --spacing-gutter: 24px;
+  --spacing-margin: 32px;
+  --spacing-xl: 40px;
+  --spacing-2xl: 64px;
+}
+
+/* ─── Dark Mode (Default) ────────────────────────────────────────── */
+:root, .dark {
+  --background: #0A0A12;
+  --foreground: #e4e1ee;
+  
+  --primary: #6C63FF;
+  --primary-foreground: #ffffff;
+  
+  --secondary: #00D9C0;
+  --secondary-foreground: #003730;
+  
+  --accent: #ffb785;
+  --accent-foreground: #502500;
+  
+  --card: rgba(255, 255, 255, 0.05);
+  --card-foreground: #e4e1ee;
+  
+  --popover: rgba(255, 255, 255, 0.08);
+  --popover-foreground: #e4e1ee;
+  
+  --muted: rgba(255, 255, 255, 0.03);
+  --muted-foreground: #c7c4d8;
+  
+  --border: rgba(255, 255, 255, 0.1);
+  --input: rgba(255, 255, 255, 0.05);
+  --ring: #6C63FF;
+  
+  --radius: 20px;
+  
+  /* Additional tokens from Stitch */
+  --surface-container: #1f1f28;
+  --surface-container-high: #2a2933;
+  --surface-container-highest: #35343e;
+}
+
+/* ─── Base Styles ────────────────────────────────────────────────── */
+@layer base {
+  * {
+    @apply border-border outline-ring/50;
+  }
+  body {
+    @apply bg-background text-foreground antialiased bg-mesh selection:bg-primary/30 min-h-screen;
+    font-family: 'Inter', sans-serif;
+  }
+  html {
+    @apply h-full scroll-smooth;
+  }
+}
+
+/* ─── ZUno Utility Classes ───────────────────────────────────────── */
+@layer utilities {
+  .glass-panel {
+    background: rgba(255, 255, 255, 0.05);
+    backdrop-filter: blur(20px);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    border-radius: 20px;
+    transition: all 0.3s ease;
+  }
+  
+  .glass-panel:hover {
+    border-color: rgba(255, 255, 255, 0.25);
+    transform: scale(1.01);
+  }
+
+  .primary-gradient {
+    background: linear-gradient(135deg, #6C63FF 0%, #4f44e2 100%);
+  }
+  
+  .primary-gradient:hover {
+    box-shadow: 0 0 20px rgba(108, 99, 255, 0.4);
+  }
+
+  .text-cyan-teal {
+    color: #00D9C0;
+  }
+  
+  .bg-mesh {
+    background: radial-gradient(circle at 0% 0%, rgba(108, 99, 255, 0.1) 0%, transparent 50%),
+                radial-gradient(circle at 100% 100%, rgba(71, 245, 219, 0.05) 0%, transparent 50%);
+  }
+}
+
+/* ─── Animation Keyframes ────────────────────────────────────────── */
+@keyframes float {
+  0%, 100% { transform: translateY(0px); }
+  50% { transform: translateY(-8px); }
+}
+
+@layer utilities {
+  .animate-float { animation: float 4s ease-in-out infinite; }
+}
